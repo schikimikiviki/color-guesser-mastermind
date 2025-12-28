@@ -12,4 +12,16 @@ public class User {
         this.chosenColorList = colorList;
     }
 
+    public List<Color> getChosenColorList() {
+        return chosenColorList;
+    }
+
+    public void setChosenColorList(List<Color> chosenColorList) {
+        this.chosenColorList = chosenColorList;
+    }
+
+
+
+
+
 }

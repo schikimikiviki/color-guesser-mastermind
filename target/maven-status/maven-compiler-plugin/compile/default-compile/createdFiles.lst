@@ -1,2 +1,6 @@
-com/backend/data/entities/Color.class
+com/backend/data/entities/User.class
+com/backend/CodeGenerator.class
+com/backend/data/enums/Color.class
+com/backend/Guesser.class
 com/backend/Application.class
+com/backend/GuessingTask.class
