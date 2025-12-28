@@ -1,4 +1,4 @@
-package com.backend.data.entities;
+package com.backend.data.enums;
 
 public enum Color {
 
