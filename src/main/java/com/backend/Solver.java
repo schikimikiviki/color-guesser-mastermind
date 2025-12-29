@@ -1,5 +1,6 @@
 package com.backend;
 
+import com.backend.data.entities.Colorcode;
 import com.backend.data.entities.Feedback;
 import com.backend.data.entities.User;
 import com.backend.data.enums.Color;
@@ -21,19 +22,16 @@ public class Solver {
     }
 
     // this can be used to create sublists
-    public List<List<List<Color>>> splitListIntoSubLists(
-            List<List<Color>> list, int numberOfSubLists) {
+    public List<List<Colorcode>> splitListIntoSubLists(List<Colorcode> list, int chunkSize) {
+        List<List<Colorcode>> result = new ArrayList<>();
 
-        int chunkSize = (list.size() + numberOfSubLists - 1) / numberOfSubLists;
+        for (int i = 0; i < list.size(); i += chunkSize) {
+            int end = Math.min(i + chunkSize, list.size());
+            result.add(list.subList(i, end));
+        }
 
-        return IntStream.range(0, numberOfSubLists)
-                .mapToObj(i -> list.subList(
-                        i * chunkSize,
-                        Math.min((i + 1) * chunkSize, list.size())
-                ))
-                .toList();
+        return result;
     }
-
 
 
     public void playGame() throws InterruptedException {
@@ -41,34 +39,39 @@ public class Solver {
         try {
             // initialize guesser and generate color codes
             User player = guesser.initialize();
-            List<Color> secretColors = player.getChosenColorList();
-            List<List<Color>> listOfAllColorCodes = codeGenerator.generateAllCodes();
-            List<List<Color>> sharedResult = new ArrayList<>();
+            Colorcode secretColors = player.getChosenColorList();
+            List<Colorcode> listOfAllColorCodes = codeGenerator.generateAllCodes();
 
-            // make ONE initial move so that we have feedback that we can use later in the threads
-            List<Color> lastGuess = List.of(Color.RED, Color.RED, Color.GREEN, Color.GREEN);
-            Feedback feedback = guesser.checkWhatIsCorrect(secretColors, lastGuess);
 
-            // devide the list into 4 parts to use threads
-            List<List<List<Color>>> subLists = splitListIntoSubLists(listOfAllColorCodes, 4);
+            // we iterate through this whole list
+            while (listOfAllColorCodes.size() > 1) {
 
-            // make guess
-            Thread t1 = new Thread(new GuessingTask(subLists.get(0), feedback, lastGuess, sharedResult));
-            Thread t2 = new Thread(new GuessingTask(subLists.get(1), feedback, lastGuess, sharedResult));
-            Thread t3 = new Thread(new GuessingTask(subLists.get(2), feedback, lastGuess, sharedResult));
-            Thread t4 = new Thread(new GuessingTask(subLists.get(3), feedback, lastGuess, sharedResult));
+                // make ONE initial move so that we have feedback that we can use later in the threads
+                Colorcode guess = listOfAllColorCodes.get(0);
+                Feedback feedback = guesser.checkWhatIsCorrect(secretColors, guess);
 
-            t1.start();
-            t2.start();
-            t3.start();
-            t4.start();
+                List<Colorcode> nextRound = new ArrayList<>();
 
-            t1.join();
-            t2.join();
-            t3.join();
-            t4.join();
+                List<List<Colorcode>> subLists = splitListIntoSubLists(listOfAllColorCodes, 4);
 
-            System.out.println("Solution is: " + (Arrays.toString(sharedResult.toArray())));
+                List<Thread> threads = new ArrayList<>();
+
+                // devide the list into 4 parts to use threads
+                for (List<Colorcode> colorList : subLists) {
+                    Thread t = new Thread(new GuessingTask(colorList, feedback, guess, nextRound));
+                    threads.add(t);
+                    t.start();
+                }
+
+                for (Thread t : threads) {
+                    t.join();
+                }
+
+                listOfAllColorCodes = nextRound;
+            }
+
+            System.out.println("Solution is: " + listOfAllColorCodes.get(0));
+
 
         } catch (Error e) {
             System.err.println("Error occured: " + e);

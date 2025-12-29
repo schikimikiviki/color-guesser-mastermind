@@ -1,4 +1,5 @@
 import com.backend.Guesser;
+import com.backend.data.entities.Colorcode;
 import com.backend.data.entities.Feedback;
 import com.backend.data.enums.Color;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,12 +35,15 @@ public class GuesserTest {
             guessedList.add(Color.BLUE);
             guessedList.add(Color.PINK);
 
+            Colorcode secretCode = new Colorcode(secretList);
+            Colorcode guessedCode = new Colorcode(guessedList);
+
             // this should return:
             // 0 exact matches
             // 1 color match - blue
 
             Feedback expectedFeedback = new Feedback(0,1);
-            Feedback actualFeedback = guesser.checkWhatIsCorrect(secretList, guessedList);
+            Feedback actualFeedback = guesser.checkWhatIsCorrect(secretCode, guessedCode);
             System.out.println("Feedback we got: Exact match is " + actualFeedback.getCorrectPosition() + " and color match is: " + actualFeedback.getCorrectColor());
             assertEquals(actualFeedback, expectedFeedback);
         }
@@ -59,12 +63,15 @@ public class GuesserTest {
         guessedList.add(Color.BLUE);
         guessedList.add(Color.PINK);
 
+        Colorcode secretCode = new Colorcode(secretList);
+        Colorcode guessedCode = new Colorcode(guessedList);
+
         // this should return:
         // 1 exact matches - blue
         // 1 color match - blue
 
         Feedback expectedFeedback = new Feedback(1,1);
-        Feedback actualFeedback = guesser.checkWhatIsCorrect(secretList, guessedList);
+        Feedback actualFeedback = guesser.checkWhatIsCorrect(secretCode, guessedCode);
         System.out.println("Feedback we got: Exact match is " + actualFeedback.getCorrectPosition() + " and color match is: " + actualFeedback.getCorrectColor());
         assertEquals(actualFeedback, expectedFeedback);
     }

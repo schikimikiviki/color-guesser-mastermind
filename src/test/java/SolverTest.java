@@ -1,6 +1,7 @@
 import com.backend.CodeGenerator;
 import com.backend.Guesser;
 import com.backend.Solver;
+import com.backend.data.entities.Colorcode;
 import com.backend.data.enums.Color;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ public class SolverTest {
     private Solver solver;
     private Guesser guesser;
     private CodeGenerator codeGenerator;
-    private List<List<Color>> allColors;
+    private List<Colorcode> allColors;
 
     @BeforeEach
     void setUp() {
@@ -27,7 +28,7 @@ public class SolverTest {
     @Test
     void splitListIntoSublists() {
         int number_of_sublists = 4;
-        List<List<List<Color>>> colorSubLists = solver.splitListIntoSubLists(allColors, number_of_sublists);
+        List<List<Colorcode>> colorSubLists = solver.splitListIntoSubLists(allColors, number_of_sublists);
         // print the first list to check
         System.out.println("the first list is: ");
         System.out.println(Arrays.toString(colorSubLists.get(0).toArray()));
@@ -39,7 +40,7 @@ public class SolverTest {
     @Test
     void checkLengthOfSublists() {
         int number_of_sublists = 4;
-        List<List<List<Color>>> colorSubLists = solver.splitListIntoSubLists(allColors, number_of_sublists);
+        List<List<Colorcode>> colorSubLists = solver.splitListIntoSubLists(allColors, number_of_sublists);
 
         int lengthOriginalList = allColors.size();
         int lengthFirstList = colorSubLists.get(0).size();
