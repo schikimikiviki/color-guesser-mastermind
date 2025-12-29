@@ -1,9 +1,11 @@
 package com.backend;
 
+import com.backend.data.entities.Feedback;
 import com.backend.data.entities.User;
 import com.backend.data.enums.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -44,8 +46,8 @@ public class Solver {
             List<List<Color>> sharedResult = new ArrayList<>();
 
             // make ONE initial move so that we have feedback that we can use later in the threads
-            List<Color> lastGuess = listOfAllColorCodes.get(0);
-            int feedback = guesser.checkWhatIsCorrect(secretColors, lastGuess);
+            List<Color> lastGuess = List.of(Color.RED, Color.RED, Color.GREEN, Color.GREEN);
+            Feedback feedback = guesser.checkWhatIsCorrect(secretColors, lastGuess);
 
             // devide the list into 4 parts to use threads
             List<List<List<Color>>> subLists = splitListIntoSubLists(listOfAllColorCodes, 4);
@@ -65,6 +67,8 @@ public class Solver {
             t2.join();
             t3.join();
             t4.join();
+
+            System.out.println("Solution is: " + (Arrays.toString(sharedResult.toArray())));
 
         } catch (Error e) {
             System.err.println("Error occured: " + e);

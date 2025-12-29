@@ -2,7 +2,6 @@ import com.backend.CodeGenerator;
 import com.backend.Guesser;
 import com.backend.Solver;
 import com.backend.data.enums.Color;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class SolverTests {
+public class SolverTest {
 
     private Solver solver;
     private Guesser guesser;
@@ -59,6 +58,10 @@ public class SolverTests {
         int sumOfLengths = lengthFirstList + lengthSecondList + lengthThirdList + lengthFourthList;
         assertEquals(lengthOriginalList, sumOfLengths);
     }
+
+
+
+
 
 
 }

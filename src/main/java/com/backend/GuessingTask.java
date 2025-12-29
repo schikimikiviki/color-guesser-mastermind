@@ -1,5 +1,6 @@
 package com.backend;
 
+import com.backend.data.entities.Feedback;
 import com.backend.data.enums.Color;
 
 import java.util.ArrayList;
@@ -8,12 +9,12 @@ import java.util.List;
 public class GuessingTask implements Runnable {
 
     private List<List<Color>> colorList;
-    private int feedback;
+    private Feedback feedback;
     private List<Color> lastGuess;
     private final List<List<Color>> sharedResult;
 
 
-    GuessingTask(List<List<Color>> colorList, int feedback, List<Color> lastGuess, List<List<Color>> sharedResult) {
+    GuessingTask(List<List<Color>> colorList, Feedback feedback, List<Color> lastGuess, List<List<Color>> sharedResult) {
         this.colorList = colorList;
         this.feedback = feedback;
         this.lastGuess = lastGuess;

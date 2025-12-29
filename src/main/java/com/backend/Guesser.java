@@ -1,5 +1,6 @@
 package com.backend;
 
+import com.backend.data.entities.Feedback;
 import com.backend.data.entities.User;
 import com.backend.data.enums.Color;
 
@@ -15,31 +16,35 @@ public class Guesser {
         colorList.add(Color.values()[new Random().nextInt(Color.values().length)]);
         colorList.add(Color.values()[new Random().nextInt(Color.values().length)]);
 
+        System.out.println("Randomly chosen color List is: " + (Arrays.toString(colorList.toArray())));
         return new User(colorList);
     }
 
 
     // this function can be used to check if there are entries in the list that are already correct
     // it returns the number of correctly set fields
-    public int checkWhatIsCorrect(List<Color> userList, List<Color> guessedList){
+    public Feedback checkWhatIsCorrect(List<Color> secretList, List<Color> guessedList) {
 
-        int correctPinsCounter = 0;
+        int correctPositionAndColor = 0; // exact matches
+        int correctColor = 0;
 
-        for (int i = 0; i < 4; i ++) {
-        // we loop though the guessed list and check if something is correct
-            if (guessedList.get(i).equals(userList.get(i))){
-                correctPinsCounter ++;
+        for (int i = 0; i < secretList.size(); i++) {
+            // we loop though the guessed list and check if something is correct
+            if (guessedList.get(i).equals(secretList.get(i))) {
+                correctPositionAndColor++;
+            } else if (secretList.contains(guessedList.get(i))) { // color is there but on wrong position
+                correctColor++;
             }
         }
 
-        return correctPinsCounter;
+        return new Feedback(correctPositionAndColor, correctColor);
     }
 
     // this can be used as final check to see if the list are equal if we have 4 correct pins
-   public boolean checkIfWholeListIsCorrect (List<Color> userList, List<Color> guessedList) {
-       return checkWhatIsCorrect(userList, guessedList) == 4;
-   }
-
+    public boolean checkIfWholeListIsCorrect(List<Color> secretList, List<Color> guessedList) {
+        Feedback feedback = checkWhatIsCorrect(secretList, guessedList);
+        return feedback.getCorrectPosition() == 4;
+    }
 
 
 }
