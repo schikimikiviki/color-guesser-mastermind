@@ -5,9 +5,8 @@ import com.backend.data.enums.Color;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
+
 
 public class Solver {
 
@@ -35,44 +34,42 @@ public class Solver {
 
 
 
-    public void playGame() {
+    public void playGame() throws InterruptedException {
 
-        // initialize guesser and generate color codes
-        User player = guesser.initialize();
-        List<Color> secretColors = player.getChosenColorList();
-        List<List<Color>> listOfAllColorCodes = codeGenerator.generateAllCodes();
+        try {
+            // initialize guesser and generate color codes
+            User player = guesser.initialize();
+            List<Color> secretColors = player.getChosenColorList();
+            List<List<Color>> listOfAllColorCodes = codeGenerator.generateAllCodes();
+            List<List<Color>> sharedResult = new ArrayList<>();
 
-        // make guess
+            // make ONE initial move so that we have feedback that we can use later in the threads
+            List<Color> lastGuess = listOfAllColorCodes.get(0);
+            int feedback = guesser.checkWhatIsCorrect(secretColors, lastGuess);
 
-        // first, devide the list into 4 parts to use threads
+            // devide the list into 4 parts to use threads
+            List<List<List<Color>>> subLists = splitListIntoSubLists(listOfAllColorCodes, 4);
 
+            // make guess
+            Thread t1 = new Thread(new GuessingTask(subLists.get(0), feedback, lastGuess, sharedResult));
+            Thread t2 = new Thread(new GuessingTask(subLists.get(1), feedback, lastGuess, sharedResult));
+            Thread t3 = new Thread(new GuessingTask(subLists.get(2), feedback, lastGuess, sharedResult));
+            Thread t4 = new Thread(new GuessingTask(subLists.get(3), feedback, lastGuess, sharedResult));
 
-//        List<Color> listPartOne = new ArrayList<Color>();
-//        List<Color> listPartTwo = new ArrayList<Color>();
-//        List<Color> listPartThree = new ArrayList<Color>();
-//        List<Color> listPartFour = new ArrayList<Color>();
-//
-//        Thread t1 = new Thread(new GuessingTask());
-//        Thread t2 = new Thread(new GuessingTask());
-//        Thread t3 = new Thread(new GuessingTask());
-//
-//        t1.start();
-//        t2.start();
-//        t3.start();
-//
-//        for (List<Color> colorCode: listOfAllColorCodes){
-//             // get feedback for this colorCode
-//           int feedbackOnCorrectPins = guesser.checkWhatIsCorrect(secretColors, colorCode);
-//
-//        }
+            t1.start();
+            t2.start();
+            t3.start();
+            t4.start();
+
+            t1.join();
+            t2.join();
+            t3.join();
+            t4.join();
+
+        } catch (Error e) {
+            System.err.println("Error occured: " + e);
+        }
+
 
     }
-
-//    Filter candidates:
-//    Use CandidateFilterTask or similar logic to remove impossible codes.
-//    Repeat until solved:
-//    Keep guessing and filtering until only one candidate remains or the guess matches the secret code.
-//    Outcome:
-//    You end up with the correct code.
-//    Along the way, the candidate list shrinks after each guess.
 }

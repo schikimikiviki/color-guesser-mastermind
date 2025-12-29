@@ -10,12 +10,14 @@ public class GuessingTask implements Runnable {
     private List<List<Color>> colorList;
     private int feedback;
     private List<Color> lastGuess;
+    private final List<List<Color>> sharedResult;
 
 
-    GuessingTask(List<List<Color>> colorList, int feedback, List<Color> lastGuess) {
+    GuessingTask(List<List<Color>> colorList, int feedback, List<Color> lastGuess, List<List<Color>> sharedResult) {
         this.colorList = colorList;
         this.feedback = feedback;
         this.lastGuess = lastGuess;
+        this.sharedResult = sharedResult;
     }
 
     @Override
@@ -25,7 +27,9 @@ public class GuessingTask implements Runnable {
 
         for ( List<Color> colorListItem: colorList) {
             if (guesser.checkWhatIsCorrect(colorListItem, lastGuess) == feedback) {
-                listOfCorrectGuesses.add(colorListItem);
+                synchronized (sharedResult) {
+                    sharedResult.add(colorListItem);
+                }
             }
         }
 
