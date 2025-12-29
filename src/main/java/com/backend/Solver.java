@@ -1,15 +1,73 @@
 package com.backend;
 
+import com.backend.data.entities.User;
+import com.backend.data.enums.Color;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 public class Solver {
 
-//    Responsibilities:
+    Guesser guesser;
+    CodeGenerator codeGenerator;
+
+    public Solver(Guesser guesser, CodeGenerator codeGenerator) {
+        this.guesser = guesser;
+        this.codeGenerator = codeGenerator;
+    }
+
+    // this can be used to create sublists
+    public List<List<List<Color>>> splitListIntoSubLists(
+            List<List<Color>> list, int numberOfSubLists) {
+
+        int chunkSize = (list.size() + numberOfSubLists - 1) / numberOfSubLists;
+
+        return IntStream.range(0, numberOfSubLists)
+                .mapToObj(i -> list.subList(
+                        i * chunkSize,
+                        Math.min((i + 1) * chunkSize, list.size())
+                ))
+                .toList();
+    }
+
+
+
+    public void playGame() {
+
+        // initialize guesser and generate color codes
+        User player = guesser.initialize();
+        List<Color> secretColors = player.getChosenColorList();
+        List<List<Color>> listOfAllColorCodes = codeGenerator.generateAllCodes();
+
+        // make guess
+
+        // first, devide the list into 4 parts to use threads
+
+
+//        List<Color> listPartOne = new ArrayList<Color>();
+//        List<Color> listPartTwo = new ArrayList<Color>();
+//        List<Color> listPartThree = new ArrayList<Color>();
+//        List<Color> listPartFour = new ArrayList<Color>();
 //
-//    Initialize the game:
-//    Generate all possible codes (e.g., 6 colors, length 4 → 1296 codes).
-//    Make guesses:
-//    Pick a code from the current candidate list.
-//    Could be random, first in list, or based on a smarter algorithm (Knuth’s algorithm).
-//    Get feedback from the game (number of correct positions/colors).
+//        Thread t1 = new Thread(new GuessingTask());
+//        Thread t2 = new Thread(new GuessingTask());
+//        Thread t3 = new Thread(new GuessingTask());
+//
+//        t1.start();
+//        t2.start();
+//        t3.start();
+//
+//        for (List<Color> colorCode: listOfAllColorCodes){
+//             // get feedback for this colorCode
+//           int feedbackOnCorrectPins = guesser.checkWhatIsCorrect(secretColors, colorCode);
+//
+//        }
+
+    }
+
 //    Filter candidates:
 //    Use CandidateFilterTask or similar logic to remove impossible codes.
 //    Repeat until solved:

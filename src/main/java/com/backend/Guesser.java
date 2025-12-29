@@ -9,10 +9,11 @@ public class Guesser {
 
     public User initialize() {
         List<Color> colorList = new ArrayList<>();
-        colorList.add(Color.GREEN);
-        colorList.add(Color.BLUE);
-        colorList.add(Color.BLUE);
-        colorList.add(Color.RED);
+        // randomly choose 4 colors
+        colorList.add(Color.values()[new Random().nextInt(Color.values().length)]);
+        colorList.add(Color.values()[new Random().nextInt(Color.values().length)]);
+        colorList.add(Color.values()[new Random().nextInt(Color.values().length)]);
+        colorList.add(Color.values()[new Random().nextInt(Color.values().length)]);
 
         return new User(colorList);
     }
