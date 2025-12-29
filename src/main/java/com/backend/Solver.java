@@ -3,16 +3,15 @@ package com.backend;
 import com.backend.data.entities.Colorcode;
 import com.backend.data.entities.Feedback;
 import com.backend.data.entities.User;
-import com.backend.data.enums.Color;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
+
 
 
 public class Solver {
 
+    int NUMBER_OF_THREADS = 4;  // this will also be used as number of sublists created
     Guesser guesser;
     CodeGenerator codeGenerator;
 
@@ -22,12 +21,13 @@ public class Solver {
     }
 
     // this can be used to create sublists
-    public List<List<Colorcode>> splitListIntoSubLists(List<Colorcode> list, int chunkSize) {
+    public List<List<Colorcode>> splitListIntoSubLists(List<Colorcode> list, int numberOfSublists) {
         List<List<Colorcode>> result = new ArrayList<>();
+        int chunkSize = (int) Math.ceil((double) list.size() / numberOfSublists);
 
         for (int i = 0; i < list.size(); i += chunkSize) {
             int end = Math.min(i + chunkSize, list.size());
-            result.add(list.subList(i, end));
+            result.add(new ArrayList<>(list.subList(i, end)));
         }
 
         return result;
@@ -52,11 +52,11 @@ public class Solver {
 
                 List<Colorcode> nextRound = new ArrayList<>();
 
-                List<List<Colorcode>> subLists = splitListIntoSubLists(listOfAllColorCodes, 4);
+                List<List<Colorcode>> subLists = splitListIntoSubLists(listOfAllColorCodes, NUMBER_OF_THREADS);
 
                 List<Thread> threads = new ArrayList<>();
 
-                // devide the list into 4 parts to use threads
+                // devide the list into n parts to use threads
                 for (List<Colorcode> colorList : subLists) {
                     Thread t = new Thread(new GuessingTask(colorList, feedback, guess, nextRound));
                     threads.add(t);
